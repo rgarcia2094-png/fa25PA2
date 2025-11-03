@@ -1,6 +1,10 @@
 //
-// Created by Manju Muralidharan on 10/19/25.
+// Created by Ryder Garcia on 10/20/25.
 //
+
+//program reads texts from input.txt then analyzes how often each letter appears,
+//then encodes it using binary codes
+//common letters get shorter codes and uncommon letters get longer codes
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -90,23 +94,54 @@ int createLeafNodes(int freq[]) {
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
     // TODO:
-    // 1. Create a MinHeap object.
-    // 2. Push all leaf node indices into the heap.
+
+    MiniHeap heap; //creation of mini heap object
+
+    for (int i = 0; i < nextFree; ++i) //push all nodes into the heap
+    heap.push(i);
     // 3. While the heap size is greater than 1:
-    //    - Pop two smallest nodes
-    //    - Create a new parent node with combined weight
-    //    - Set left/right pointers
-    //    - Push new parent index back into the heap
-    // 4. Return the index of the last remaining node (root)
+    while (heap.size >1) { // combine the smallest pairs until one node remains
+        int left = heap.pop();
+        int right = heap.pop();
+
+    //create new parent node
+    charArr[nextFree] = '*'; //marks the internal node marker
+    weightArr[nextFree] = weightArr[left] + weightArr[right]; //both childs combined
+    leftArr[nextFree] = left; //left child
+    rightArr[nextFree] = right; //right child
+
+    heap.push(nextFree); //push new parent into the existing heap
+    nextFree++; // increment index
+    }
+
     return -1; // placeholder
 }
 
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
     // TODO:
-    // Use stack<pair<int, string>> to simulate DFS traversal.
-    // Left edge adds '0', right edge adds '1'.
-    // Record code when a leaf node is reached.
+    if (root ==-1) return; //check if tree = empty
+
+    //stack will hold nodeIndex, currentCode
+    stack<pair<int, string>> st;
+    st.push({root, ""}); //start traversal
+
+    while (!st.empty()) { //keep going until stack is empty
+    auto [node, code] = st.top(); //take top element
+    st.pop();
+
+    //if leaf node has no children
+    if (leftArr[node] == -1 && rightArr[node] == -1) {
+        if (charArr[node] >= 'a' && charArr[node] <= 'z') // store the genrated code for the chosen character
+        codes[charArr[node] - 'a'] = code;
+    } else {
+    // push to the right direction first, then in the left direction so that the left is first, +1
+    if (rightArr[node] != -1)
+        st.push([rightArr[node],code + "1"});
+    if (leftArr[node] != -1) // push left child, +0
+        st.push({leftArr[node], code + "0"});
+    }
+  }
 }
 
 // Step 5: Print table and encoded message
