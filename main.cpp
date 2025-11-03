@@ -1,6 +1,10 @@
 //
 // Created by Ryder Garcia  on 10/20/25.
 //
+
+//program reads texts from input.txt then aalyzes how often eahc letter appears, 
+//then encodes it using binary codes 
+//common letters get shorter code and uncommon letters get longer codes
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -91,24 +95,24 @@ int createLeafNodes(int freq[]) {
 int buildEncodingTree(int nextFree) {
     // TODO:
 
-    MiniHeap heap;
+    MiniHeap heap; //creation of mini heap object 
 
-    for (int i = 0; i < nextFree; ++i)
+    for (int i = 0; i < nextFree; ++i) //push all nodes into the heap 
     heap.push(i);
     // 3. While the heap size is greater than 1:
-    while (heap.size >1) {
-    int left = heap.pop();
-    int right = heap.pop();
+    while (heap.size >1) { // combine the smallest pairs until one node remains
+        int left = heap.pop(); 
+        int right = heap.pop();
 
+    //create new parent node
     charArr[nextFree] = '*'; //marks the internal node marker
-    weightArr[nextFree] = weightArr[left] + weightArr[right];
-    leftArr[nextFree] = left;
-    rightArr[nextFree] = right;
+    weightArr[nextFree] = weightArr[left] + weightArr[right]; //both childs combined
+    leftArr[nextFree] = left; //left child 
+    rightArr[nextFree] = right; //right child 
 
-    heap.push(nextFree);
-    nextFree++;
+    heap.push(nextFree); //push new parent into the existing heap
+    nextFree++; // increment index 
     }
-
 
     return -1; // placeholder
 }
@@ -116,28 +120,28 @@ int buildEncodingTree(int nextFree) {
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
     // TODO:
-    if (root ==-1) return;
-    
+    if (root ==-1) return; //check if tree = empty
+
     //stack will hold nodeIndex, currentCode
     stack<pair<int, string>> st;
-    st.push({root, ""});
-    
-    while (!st.empty()) {
-    auto [node, code] = st.top();
+    st.push({root, ""}); //start traversal 
+
+    while (!st.empty()) { //keep going until stack is empty 
+    auto [node, code] = st.top(); //take top element 
     st.pop();
-    
+
     //if leaf node has no children
     if (leftArr[node] == -1 && rightArr[node] == -1) {
-        if (charArr[node] >= 'a' && charArr[node] <= 'z')
+        if (charArr[node] >= 'a' && charArr[node] <= 'z') // store the genrated code for the chosen character
         codes[charArr[node] - 'a'] = code;
     } else {
-    // push to the right direction first, then in the left direction so that the left is first 
+    // push to the right direction first, then in the left direction so that the left is first, +1
     if (rightArr[node] != -1)
         st.push([rightArr[node],code + "1"});
-    if (leftArr[node] != -1)
+    if (leftArr[node] != -1) // push left child, +0
         st.push({leftArr[node], code + "0"});
     }
-  }   
+  }
 }
 
 // Step 5: Print table and encoded message
