@@ -1,5 +1,5 @@
 //
-// Created by Manju Muralidharan on 10/19/25.
+// Created by Ryder Garcia  on 10/20/25.
 //
 #include <iostream>
 #include <fstream>
@@ -90,14 +90,25 @@ int createLeafNodes(int freq[]) {
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
     // TODO:
-    // 1. Create a MinHeap object.
-    // 2. Push all leaf node indices into the heap.
+
+    MiniHeap heap;
+
+    for (int i = 0; i < nextFree; ++i)
+    heap.push(i);
     // 3. While the heap size is greater than 1:
-    //    - Pop two smallest nodes
-    //    - Create a new parent node with combined weight
-    //    - Set left/right pointers
-    //    - Push new parent index back into the heap
-    // 4. Return the index of the last remaining node (root)
+    while (heap.size >1) {
+    int left = heap.pop();
+    int right = heap.pop();
+
+    charArr[nextFree] = '*'; //marks the internal node marker
+    weightArr[nextFree] = weightArr[left] + weightArr[right];
+    leftArr[nextFree] = left;
+    rightArr[nextFree] = right;
+
+    heap.push(nextFree);
+    nextFree++;
+
+
     return -1; // placeholder
 }
 
