@@ -4,7 +4,7 @@ w//
 
 
 //defines the Minheap structure that is used to manage node indices by their corresponding weights
-//heap ensures the mallest weight always stays at the root
+//heap ensures the smallest weight always stays at the root
 
 #ifndef HEAP_H
 #define HEAP_H
