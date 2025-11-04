@@ -2,9 +2,11 @@
 // Created by Ryder Garcia on 10/20/25.
 //
 
-//program reads texts from input.txt then analyzes how often each letter appears,
+//program reads texts from input.txt, then analyzes how often each letter appears,
 //then encodes it using binary codes
 //common letters get shorter codes and uncommon letters get longer codes
+
+
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -95,14 +97,14 @@ int createLeafNodes(int freq[]) {
 int buildEncodingTree(int nextFree) {
     // TODO:
 
-    MiniHeap heap; //creation of mini heap object
+    MinHeap heap; //creation of mini heap object
 
     for (int i = 0; i < nextFree; ++i) //push all nodes into the heap
     heap.push(i);
     // 3. While the heap size is greater than 1:
     while (heap.size >1) { // combine the smallest pairs until one node remains
-        int left = heap.pop();
-        int right = heap.pop();
+        int left = heap.pop(weightArr); //get smallest node index
+        int right = heap.pop(weightArr); // get second smallest
 
     //create new parent node
     charArr[nextFree] = '*'; //marks the internal node marker
@@ -110,11 +112,11 @@ int buildEncodingTree(int nextFree) {
     leftArr[nextFree] = left; //left child
     rightArr[nextFree] = right; //right child
 
-    heap.push(nextFree); //push new parent into the existing heap
+    heap.push(nextFree, weightArr); //push new parent into the existing heap
     nextFree++; // increment index
     }
 
-    return -1; // placeholder
+    return heap.pop(weightArr); // last node remianing which is the root for the tree
 }
 
 // Step 4: Use an STL stack to generate codes
@@ -127,19 +129,19 @@ void generateCodes(int root, string codes[]) {
     st.push({root, ""}); //start traversal
 
     while (!st.empty()) { //keep going until stack is empty
-    auto [node, code] = st.top(); //take top element
-    st.pop();
+        auto [node, code] = st.top(); //take top element
+        st.pop(); //remove it from the stack
 
     //if leaf node has no children
     if (leftArr[node] == -1 && rightArr[node] == -1) {
         if (charArr[node] >= 'a' && charArr[node] <= 'z') // store the genrated code for the chosen character
-        codes[charArr[node] - 'a'] = code;
+        codes[charArr[node] - 'a'] = code; //store code for that letter
     } else {
     // push to the right direction first, then in the left direction so that the left is first, +1
     if (rightArr[node] != -1)
-        st.push([rightArr[node],code + "1"});
+        st.push([rightArr[node],code + "1"}); //right adds '1'
     if (leftArr[node] != -1) // push left child, +0
-        st.push({leftArr[node], code + "0"});
+        st.push({leftArr[node], code + "0"}); //left adds '0'
     }
   }
 }
